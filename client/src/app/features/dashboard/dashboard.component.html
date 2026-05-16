@@ -1,0 +1,25 @@
+<main class="dashboard-page">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">R</span>
+      <span>ResumeIQ</span>
+    </div>
+    <button type="button" (click)="logout()">Sign out</button>
+  </header>
+
+  <section class="dashboard-hero">
+    <h1>Welcome{{ user?.name ? ", " + user?.name : "" }}</h1>
+    <div class="dashboard-welcome">
+      <p>Your AI-powered ATS Resume Analyzer is ready.</p>
+
+      <p>
+        Upload your resume, get your ATS score, and receive smart suggestions to
+        improve your chances of getting shortlisted.
+      </p>
+
+      <p>
+        <strong>Start optimizing your career today.</strong>
+      </p>
+    </div>
+  </section>
+</main>

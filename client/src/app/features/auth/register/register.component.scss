@@ -1,0 +1,135 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.auth-page {
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(18, 98, 92, 0.1), transparent 38%),
+    linear-gradient(315deg, rgba(193, 120, 23, 0.12), transparent 34%), #f7faf8;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 32px 16px;
+}
+
+.auth-panel {
+  background: #ffffff;
+  border: 1px solid #dde7e0;
+  border-radius: 8px;
+  box-shadow: 0 24px 70px rgba(28, 48, 44, 0.12);
+  max-width: 460px;
+  padding: 32px;
+  width: 100%;
+}
+
+.brand {
+  align-items: center;
+  color: #20342f;
+  display: flex;
+  font-size: 15px;
+  font-weight: 700;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.brand-mark {
+  align-items: center;
+  background: #11645d;
+  border-radius: 6px;
+  color: #ffffff;
+  display: inline-flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+
+.auth-heading {
+  margin-bottom: 28px;
+}
+
+h1 {
+  color: #172622;
+  font-size: 32px;
+  line-height: 1.1;
+  margin: 0 0 10px;
+}
+
+p {
+  color: #60726c;
+  line-height: 1.55;
+  margin: 0;
+}
+
+form {
+  display: grid;
+  gap: 10px;
+}
+
+label {
+  color: #243d37;
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+input {
+  border: 1px solid #cddbd4;
+  border-radius: 6px;
+  color: #172622;
+  font: inherit;
+  min-height: 46px;
+  padding: 0 14px;
+}
+
+input:focus {
+  border-color: #11645d;
+  box-shadow: 0 0 0 3px rgba(17, 100, 93, 0.14);
+  outline: none;
+}
+
+button {
+  background: #11645d;
+  border: 0;
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  min-height: 48px;
+  margin-top: 12px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.field-error,
+.form-error {
+  color: #b42318;
+  font-size: 14px;
+}
+
+.form-error {
+  background: #fff1f0;
+  border: 1px solid #ffd2cc;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.switch-link {
+  margin-top: 24px;
+  text-align: center;
+}
+
+a {
+  color: #11645d;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
