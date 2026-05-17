@@ -74,16 +74,16 @@ ResumeIQ helps users by:
 
 ### Login
 
-![Login](./screenshots/Login.png)
+![Login](./Screenshots/Login.png)
 
 ### Dashboard
 
-![Dashboard](./screenshots/Dashboard.png)
+![Dashboard](./Screenshots/Dashboard.png)
 
 ### AI Processing
 
-![Processing](./screenshots/Processing.png)
+![Processing](./Screenshots/Processing.png)
 
 ### ATS Score Result
 
-![Result](./screenshots/Result.png)
+![Result](./Screenshots/Result.png)
