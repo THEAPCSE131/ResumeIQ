@@ -1,25 +1,293 @@
 <main class="dashboard-page">
+  <!-- HEADER -->
   <header class="topbar">
-    <div class="brand">
-      <span class="brand-mark">R</span>
-      <span>ResumeIQ</span>
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-mark"> R </span>
+
+        <div class="brand-info">
+          <strong> ResumeIQ </strong>
+
+          <small> AI Resume Analyzer </small>
+        </div>
+      </div>
+
+      <button class="logout-btn" (click)="logout()">Sign out</button>
     </div>
-    <button type="button" (click)="logout()">Sign out</button>
   </header>
 
-  <section class="dashboard-hero">
-    <h1>Welcome{{ user?.name ? ", " + user?.name : "" }}</h1>
-    <div class="dashboard-welcome">
-      <p>Your AI-powered ATS Resume Analyzer is ready.</p>
+  <!-- MAIN -->
+  <section class="dashboard-layout">
+    <!-- LEFT -->
+    <div class="left-panel">
+      <section class="upload-card">
+        <div class="card-glow"></div>
 
-      <p>
-        Upload your resume, get your ATS score, and receive smart suggestions to
-        improve your chances of getting shortlisted.
-      </p>
+        <!-- welcome -->
+        <div class="welcome-block">
+          <h1>Welcome{{ user?.name ? ", " + user?.name : "" }}</h1>
+        </div>
 
-      <p>
-        <strong>Start optimizing your career today.</strong>
-      </p>
+        <!-- hidden input -->
+        <input
+          type="file"
+          #fileInput
+          (change)="onFileSelected($event)"
+          accept=".pdf,.docx"
+          hidden
+        />
+
+        <!-- upload -->
+        <div class="upload-zone" (click)="fileInput.click()">
+          @if (!selectedFile) {
+            <div class="upload-placeholder">
+              <div class="upload-icon">↑</div>
+
+              <h3>Upload Resume</h3>
+
+              <span> Drag & drop or browse file </span>
+            </div>
+          } @else {
+            <div class="selected-file">
+              <div class="file-icon">📄</div>
+
+              <div>
+                <h4>
+                  {{ selectedFile.name }}
+                </h4>
+
+                <span> Ready for AI analysis </span>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- supported -->
+        <div class="supported-files">
+          <span> Supported formats </span>
+
+          <strong> PDF • DOCX </strong>
+        </div>
+
+        <!-- button -->
+        <button
+          class="analyze-btn"
+          [disabled]="!selectedFile || isAnalyzing"
+          (click)="uploadResume()"
+        >
+          @if (!isAnalyzing) {
+            Analyze Resume
+          } @else {
+            Analyzing Resume...
+          }
+        </button>
+
+        <!-- powered by -->
+        <div class="powered-wrapper">
+          <div class="powered-top">
+            <div class="powered-dot"></div>
+
+            <span> Powered by </span>
+          </div>
+
+          <h3>Groq + Llama AI</h3>
+
+          <p>
+            Advanced AI-powered resume intelligence for modern ATS optimization.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-panel">
+      <!-- EMPTY -->
+      @if (!showResult && !isAnalyzing) {
+        <section class="empty-state">
+          <div class="empty-hero">
+            <div class="hero-badge">AI Resume Optimization Platform</div>
+
+            <h2>Build a resume recruiters actually notice</h2>
+
+            <p>
+              ResumeIQ helps improve ATS score, optimize resume keywords and
+              identify missing skills to increase interview opportunities.
+            </p>
+          </div>
+
+          <div class="benefit-grid">
+            <div class="benefit-card">
+              <div class="benefit-icon">🎯</div>
+
+              <h3>ATS Score Analysis</h3>
+
+              <p>Check how your resume performs in ATS systems.</p>
+            </div>
+
+            <div class="benefit-card">
+              <div class="benefit-icon">🚀</div>
+
+              <h3>Better Visibility</h3>
+
+              <p>Improve recruiter visibility using AI insights.</p>
+            </div>
+
+            <div class="benefit-card">
+              <div class="benefit-icon">💡</div>
+
+              <h3>Smart Suggestions</h3>
+
+              <p>Get AI-powered resume improvement recommendations.</p>
+            </div>
+
+            <div class="benefit-card">
+              <div class="benefit-icon">📈</div>
+
+              <h3>Career Growth</h3>
+
+              <p>Increase your chances of getting shortlisted faster.</p>
+            </div>
+          </div>
+
+          <!-- extra -->
+          <div class="insight-layout">
+            <div class="insight-card">
+              <div class="insight-top">
+                <div class="insight-circle">AI</div>
+
+                <div>
+                  <h3>AI Resume Intelligence</h3>
+
+                  <span> Advanced resume evaluation engine </span>
+                </div>
+              </div>
+
+              <p>
+                ResumeIQ analyzes resume structure, technical skills and keyword
+                strength to improve ATS visibility and recruiter reach.
+              </p>
+            </div>
+
+            <div class="insight-card">
+              <h3>Why ATS Optimization Matters</h3>
+
+              <p>
+                Most companies use ATS systems before recruiters manually review
+                resumes. Optimizing your resume improves visibility and
+                interview opportunities.
+              </p>
+            </div>
+          </div>
+        </section>
+      }
+
+      <!-- LOADER -->
+      <!-- LOADER -->
+      @if (isAnalyzing) {
+        <section class="loader-card">
+          <div class="loader-top">
+            <div class="loader-ring"></div>
+
+            <div class="loader-text">
+              <h2>AI is analyzing your resume</h2>
+
+              <p>Matching skills • ATS scoring • Generating insights</p>
+            </div>
+          </div>
+
+          <!-- progress -->
+          <!-- <div class="progress-wrapper">
+            <div class="progress-label">Analysis Progress</div>
+
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
+            </div>
+
+            <div class="progress-footer">
+              <span class="progress-percent"> 82% completed </span>
+
+              <div class="powered-badge">
+                <span class="dot"></span>
+                Groq AI
+              </div>
+            </div>
+          </div> -->
+
+          <!-- steps -->
+          <div class="loader-steps">
+            <div class="step done">✓ Uploaded successfully</div>
+
+            <div class="step done">✓ Text extracted</div>
+
+            <div class="step active">⏳ AI processing</div>
+
+            <div class="step">⏳ Generating suggestions</div>
+          </div>
+        </section>
+      }
+
+      <!-- RESULT -->
+      @if (showResult && uploadResult) {
+        <section class="analysis-card">
+          <div class="analysis-header">
+            <span class="analysis-subtitle"> ATS SCORE </span>
+
+            <h2>{{ uploadResult.atsScore }}%</h2>
+
+            <p>Excellent Resume Quality</p>
+          </div>
+
+          <div class="analysis-section">
+            <div class="analysis-title">Professional Summary</div>
+
+            <p>
+              {{ uploadResult.summary }}
+            </p>
+          </div>
+
+          <div class="analysis-skills-grid">
+            <div class="analysis-skill-card">
+              <div class="analysis-title">Matched Skills</div>
+
+              <div class="analysis-skills">
+                @for (skill of uploadResult.matchedSkills; track skill) {
+                  <span class="skill-badge success">
+                    {{ skill }}
+                  </span>
+                }
+              </div>
+            </div>
+
+            <div class="analysis-skill-card">
+              <div class="analysis-title">Missing Skills</div>
+
+              <div class="analysis-skills">
+                @for (skill of uploadResult.missingSkills; track skill) {
+                  <span class="skill-badge danger">
+                    {{ skill }}
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="analysis-section">
+            <div class="analysis-title">AI Suggestions</div>
+
+            <div class="suggestion-list">
+              @for (suggestion of uploadResult.suggestions; track suggestion) {
+                <div class="suggestion-item">
+                  <div class="suggestion-icon">✨</div>
+
+                  <p>
+                    {{ suggestion }}
+                  </p>
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      }
     </div>
   </section>
 </main>
