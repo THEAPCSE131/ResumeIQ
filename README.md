@@ -14,6 +14,7 @@ Most resumes get rejected by ATS (Applicant Tracking Systems) before reaching re
 ## 💡 Solution
 
 ResumeIQ helps users by:
+
 - Analyzing resumes using AI
 - Generating ATS compatibility score
 - Identifying missing skills
@@ -36,18 +37,22 @@ ResumeIQ helps users by:
 ## 🛠 Tech Stack
 
 ### Frontend
+
 - Angular 18
 - TypeScript
 - SCSS
 
 ### Backend
+
 - Node.js
 - Express.js
 
 ### Database
+
 - MongoDB
 
 ### AI Integration
+
 - Groq AI API
 
 ---
@@ -64,3 +69,21 @@ ResumeIQ helps users by:
 5. Results displayed in dashboard UI
 
 ---
+
+## 📸 Screenshots
+
+### Login
+
+![Login](./screenshots/Login.png)
+
+### Dashboard
+
+![Dashboard](./screenshots/Dashboard.png)
+
+### AI Processing
+
+![Processing](./screenshots/Processing.png)
+
+### ATS Score Result
+
+![Result](./screenshots/Result.png)
