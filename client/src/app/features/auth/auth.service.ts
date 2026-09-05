@@ -1,8 +1,9 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
-import { environment } from '../../..//environments/enviroment';
+import { environment } from '../../../environments/environment';
+import { getApiErrorMessage } from '../../shared/utils/api-error';
 
 export interface AuthUser {
   id: string;
@@ -95,12 +96,7 @@ export class AuthService {
     return Boolean(localStorage.getItem(this.tokenKey));
   }
 
-  private handleAuthError(error: HttpErrorResponse): Observable<never> {
-    const message =
-      typeof error.error?.message === 'string'
-        ? error.error.message
-        : 'Something went wrong. Please try again.';
-
-    return throwError(() => new Error(message));
+  private handleAuthError(error: unknown): Observable<never> {
+    return throwError(() => new Error(getApiErrorMessage(error)));
   }
 }

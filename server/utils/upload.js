@@ -1,9 +1,17 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
+const {
+  MAX_RESUME_SIZE_BYTES,
+  isAllowedResumeFile,
+} = require("./fileValidation");
+
+const uploadDirectory = path.join(__dirname, "../uploads");
+fs.mkdirSync(uploadDirectory, { recursive: true });
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    cb(null, uploadDirectory);
   },
   filename: (req, file, cb) => {
     const uniqueName =
@@ -17,21 +25,23 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = [
-    "application/pdf",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  ];
-
-  if (allowedTypes.includes(file.mimetype)) {
+  if (isAllowedResumeFile(file)) {
     cb(null, true);
   } else {
-    cb(new Error("Only PDF and DOCX allowed"), false);
+    const error = new Error("Only PDF and DOCX resumes are allowed.");
+    error.statusCode = 400;
+    error.expose = true;
+    cb(error, false);
   }
 };
 
 const upload = multer({
   storage,
   fileFilter,
+  limits: {
+    fileSize: MAX_RESUME_SIZE_BYTES,
+    files: 1,
+  },
 });
 
 module.exports = upload;

@@ -9,10 +9,10 @@ const protect = (req, res, next) => {
       req.user = decoded.id; // Attach user ID to request object
       next();
     } catch (error) {
-      res.status(401).json({ message: "Invalid token" });
+      return res.status(401).json({ success: false, message: "Invalid token." });
     }
   } else {
-    res.status(401).json({ message: "No token provided" });
+    return res.status(401).json({ success: false, message: "Authentication is required." });
   }
 };
 

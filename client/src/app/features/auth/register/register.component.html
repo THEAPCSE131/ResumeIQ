@@ -2,7 +2,7 @@
   <section class="auth-panel" aria-labelledby="register-title">
     <div class="brand">
       <span class="brand-mark">R</span>
-      <span>ResumeAI</span>
+      <span>ResumeIQ</span>
     </div>
 
     <div class="auth-heading">
@@ -18,6 +18,7 @@
         formControlName="name"
         autocomplete="name"
         placeholder="Your full name"
+        [attr.aria-invalid]="hasError('name', 'required') || hasError('name', 'minlength')"
       />
       @if (hasError("name", "required")) {
         <p class="field-error">Name is required.</p>
@@ -33,6 +34,7 @@
         formControlName="email"
         autocomplete="email"
         placeholder="you@example.com"
+        [attr.aria-invalid]="hasError('email', 'required') || hasError('email', 'email')"
       />
       @if (hasError("email", "required")) {
         <p class="field-error">Email is required.</p>
@@ -48,6 +50,7 @@
         formControlName="password"
         autocomplete="new-password"
         placeholder="At least 8 characters"
+        [attr.aria-invalid]="hasError('password', 'required') || hasError('password', 'minlength')"
       />
       @if (hasError("password", "required")) {
         <p class="field-error">Password is required.</p>

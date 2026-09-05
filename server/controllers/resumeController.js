@@ -1,35 +1,40 @@
-const extractTextFromResume = require("../utils/resumeParser");
+const { extractTextFromResume } = require("../utils/resumeParser");
 const analyzedResumeWithAI =
   require("../services/aiService").analyzedResumeWithAI;
+const fs = require("fs/promises");
+const { createHttpError } = require("../utils/httpError");
+const {
+  verifyFileSignature,
+  validateExtractedText,
+} = require("../utils/fileValidation");
 
-const uploadResume = async (req, res) => {
+const uploadResume = async (req, res, next) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
+      throw createHttpError(400, "Please upload a PDF or DOCX resume.");
     }
     const filePath = req.file.path;
-    const filename = req.file.filename;
     const originalname = req.file.originalname;
     const mimeType = req.file.mimetype;
 
-    // Extract text from the uploaded resume
-    const extractedText =
-      await require("../utils/resumeParser").extractTextFromResume(
-        filePath,
-        mimeType,
-      );
+    await verifyFileSignature(req.file);
+    const extractedText = await extractTextFromResume(filePath, mimeType);
+    const validatedText = validateExtractedText(extractedText);
 
-    // Analyze the extracted text with AI
-    const aiResult = await analyzedResumeWithAI(extractedText);
+    const aiResult = await analyzedResumeWithAI(validatedText);
 
-    res.status(200).json({
+    return res.status(200).json({
+      success: true,
       message: "Resume uploaded successfully!",
       originalname,
-      data: aiResult, // Return first 500 characters for preview
+      data: aiResult,
     });
   } catch (error) {
-    console.error("Error uploading resume:", error);
-    res.status(500).json({ message: "Error uploading resume", error });
+    return next(error);
+  } finally {
+    if (req.file?.path) {
+      await fs.unlink(req.file.path).catch(() => undefined);
+    }
   }
 };
 

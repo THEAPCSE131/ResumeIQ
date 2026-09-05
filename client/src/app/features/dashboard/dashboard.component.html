@@ -1,293 +1,203 @@
 <main class="dashboard-page">
-  <!-- HEADER -->
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand">
-        <span class="brand-mark"> R </span>
-
+      <div class="brand" aria-label="ResumeIQ AI Resume Analyzer">
+        <span class="brand-mark" aria-hidden="true">R</span>
         <div class="brand-info">
-          <strong> ResumeIQ </strong>
-
-          <small> AI Resume Analyzer </small>
+          <strong>ResumeIQ</strong>
+          <small>AI Resume Analyzer</small>
         </div>
       </div>
-
-      <button class="logout-btn" (click)="logout()">Sign out</button>
+      <button class="logout-btn" type="button" (click)="logout()">Sign out</button>
     </div>
   </header>
 
-  <!-- MAIN -->
   <section class="dashboard-layout">
-    <!-- LEFT -->
-    <div class="left-panel">
-      <section class="upload-card">
-        <div class="card-glow"></div>
-
-        <!-- welcome -->
+    <aside class="left-panel">
+      <section class="upload-card" aria-labelledby="upload-title">
+        <div class="card-glow" aria-hidden="true"></div>
         <div class="welcome-block">
-          <h1>Welcome{{ user?.name ? ", " + user?.name : "" }}</h1>
+          <h1 id="upload-title">Welcome{{ user?.name ? ', ' + user?.name : '' }}</h1>
+          <p>Upload a resume for an AI-powered review.</p>
         </div>
 
-        <!-- hidden input -->
-        <input
-          type="file"
-          #fileInput
-          (change)="onFileSelected($event)"
-          accept=".pdf,.docx"
-          hidden
-        />
+        <input #fileInput class="visually-hidden" type="file" [accept]="acceptedFileTypes"
+          (change)="onFileSelected($event)" />
 
-        <!-- upload -->
-        <div class="upload-zone" (click)="fileInput.click()">
+        <div class="upload-zone" [class.drag-active]="isDragActive" [class.has-file]="selectedFile"
+          [class.is-disabled]="isAnalyzing" role="button" tabindex="0" [attr.aria-disabled]="isAnalyzing"
+          aria-describedby="upload-help upload-feedback" (click)="!isAnalyzing && fileInput.click()"
+          (keydown)="onUploadZoneKeydown($event, fileInput)" (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
           @if (!selectedFile) {
             <div class="upload-placeholder">
-              <div class="upload-icon">↑</div>
-
-              <h3>Upload Resume</h3>
-
-              <span> Drag & drop or browse file </span>
+              <div class="upload-icon" aria-hidden="true">↑</div>
+              <h2>Upload your resume</h2>
+              <span>Drag and drop, or press Enter to browse</span>
             </div>
           } @else {
             <div class="selected-file">
-              <div class="file-icon">📄</div>
-
-              <div>
-                <h4>
-                  {{ selectedFile.name }}
-                </h4>
-
-                <span> Ready for AI analysis </span>
+              <div class="file-icon" aria-hidden="true">📄</div>
+              <div class="file-details">
+                <h2>{{ selectedFile.name }}</h2>
+                <span>Ready for AI analysis</span>
               </div>
+              <button class="remove-file-btn" type="button" [disabled]="isAnalyzing"
+                [attr.aria-label]="'Remove ' + selectedFile.name" (click)="removeSelectedFile($event)">
+                Remove
+              </button>
             </div>
           }
         </div>
 
-        <!-- supported -->
-        <div class="supported-files">
-          <span> Supported formats </span>
+        <p id="upload-help" class="supported-files">PDF or DOCX · Maximum file size 5 MB</p>
+        @if (errorMessage) {
+          <p id="upload-feedback" class="upload-feedback error" role="alert">{{ errorMessage }}</p>
+        }
 
-          <strong> PDF • DOCX </strong>
-        </div>
-
-        <!-- button -->
-        <button
-          class="analyze-btn"
-          [disabled]="!selectedFile || isAnalyzing"
-          (click)="uploadResume()"
-        >
-          @if (!isAnalyzing) {
-            Analyze Resume
-          } @else {
-            Analyzing Resume...
-          }
+        <button class="analyze-btn" type="button" [disabled]="!selectedFile || isAnalyzing"
+          (click)="uploadResume()">
+          {{ isAnalyzing ? 'Analyzing resume…' : 'Analyze resume' }}
         </button>
 
-        <!-- powered by -->
         <div class="powered-wrapper">
           <div class="powered-top">
-            <div class="powered-dot"></div>
-
-            <span> Powered by </span>
+            <div class="powered-dot" aria-hidden="true"></div>
+            <span>Powered by</span>
           </div>
-
-          <h3>Groq + Llama AI</h3>
-
-          <p>
-            Advanced AI-powered resume intelligence for modern ATS optimization.
-          </p>
+          <h2>Groq + Llama AI</h2>
+          <p>Focused resume insights for modern ATS optimization.</p>
         </div>
       </section>
-    </div>
+    </aside>
 
-    <!-- RIGHT -->
-    <div class="right-panel">
-      <!-- EMPTY -->
+    <section class="right-panel" aria-live="polite" aria-atomic="true">
+      <p class="visually-hidden" role="status">{{ statusMessage }}</p>
+
       @if (!showResult && !isAnalyzing) {
-        <section class="empty-state">
+        <section class="empty-state" aria-labelledby="empty-state-title">
           <div class="empty-hero">
-            <div class="hero-badge">AI Resume Optimization Platform</div>
-
-            <h2>Build a resume recruiters actually notice</h2>
-
-            <p>
-              ResumeIQ helps improve ATS score, optimize resume keywords and
-              identify missing skills to increase interview opportunities.
-            </p>
+            <div class="hero-badge">AI Resume Optimization</div>
+            <h2 id="empty-state-title">Build a resume recruiters notice</h2>
+            <p>ResumeIQ evaluates ATS readiness, highlights relevant skills, and turns AI feedback into clear next steps.</p>
           </div>
 
           <div class="benefit-grid">
             <div class="benefit-card">
-              <div class="benefit-icon">🎯</div>
-
-              <h3>ATS Score Analysis</h3>
-
-              <p>Check how your resume performs in ATS systems.</p>
+              <div class="benefit-icon" aria-hidden="true">🎯</div>
+              <h3>ATS score</h3>
+              <p>See a practical view of your resume’s ATS readiness.</p>
             </div>
-
             <div class="benefit-card">
-              <div class="benefit-icon">🚀</div>
-
-              <h3>Better Visibility</h3>
-
-              <p>Improve recruiter visibility using AI insights.</p>
+              <div class="benefit-icon" aria-hidden="true">🚀</div>
+              <h3>Skill alignment</h3>
+              <p>Identify strengths and skills worth adding next.</p>
             </div>
-
             <div class="benefit-card">
-              <div class="benefit-icon">💡</div>
-
-              <h3>Smart Suggestions</h3>
-
-              <p>Get AI-powered resume improvement recommendations.</p>
+              <div class="benefit-icon" aria-hidden="true">💡</div>
+              <h3>Clear suggestions</h3>
+              <p>Get concise recommendations you can act on quickly.</p>
             </div>
-
             <div class="benefit-card">
-              <div class="benefit-icon">📈</div>
-
-              <h3>Career Growth</h3>
-
-              <p>Increase your chances of getting shortlisted faster.</p>
+              <div class="benefit-icon" aria-hidden="true">📈</div>
+              <h3>Career-ready focus</h3>
+              <p>Make your experience easier for recruiters to recognize.</p>
             </div>
           </div>
 
-          <!-- extra -->
           <div class="insight-layout">
             <div class="insight-card">
               <div class="insight-top">
-                <div class="insight-circle">AI</div>
-
+                <div class="insight-circle" aria-hidden="true">AI</div>
                 <div>
-                  <h3>AI Resume Intelligence</h3>
-
-                  <span> Advanced resume evaluation engine </span>
+                  <h3>AI resume intelligence</h3>
+                  <span>Structured feedback, tailored to your document</span>
                 </div>
               </div>
-
-              <p>
-                ResumeIQ analyzes resume structure, technical skills and keyword
-                strength to improve ATS visibility and recruiter reach.
-              </p>
+              <p>ResumeIQ reviews resume structure, technical skills, and keyword strength to help improve visibility.</p>
             </div>
-
             <div class="insight-card">
-              <h3>Why ATS Optimization Matters</h3>
-
-              <p>
-                Most companies use ATS systems before recruiters manually review
-                resumes. Optimizing your resume improves visibility and
-                interview opportunities.
-              </p>
+              <h3>Why ATS optimization matters</h3>
+              <p>Most hiring teams use applicant tracking systems before a manual review. Clear skills and keywords make your experience easier to find.</p>
             </div>
           </div>
         </section>
       }
 
-      <!-- LOADER -->
-      <!-- LOADER -->
       @if (isAnalyzing) {
-        <section class="loader-card">
+        <section class="loader-card" aria-labelledby="analysis-progress-title">
           <div class="loader-top">
-            <div class="loader-ring"></div>
-
+            <div class="loader-ring" aria-hidden="true"></div>
             <div class="loader-text">
-              <h2>AI is analyzing your resume</h2>
-
-              <p>Matching skills • ATS scoring • Generating insights</p>
+              <h2 id="analysis-progress-title">AI is analyzing your resume</h2>
+              <p>Reviewing skills, ATS readiness, and improvement opportunities.</p>
             </div>
           </div>
-
-          <!-- progress -->
-          <!-- <div class="progress-wrapper">
-            <div class="progress-label">Analysis Progress</div>
-
-            <div class="progress-bar">
-              <div class="progress-fill"></div>
-            </div>
-
-            <div class="progress-footer">
-              <span class="progress-percent"> 82% completed </span>
-
-              <div class="powered-badge">
-                <span class="dot"></span>
-                Groq AI
-              </div>
-            </div>
-          </div> -->
-
-          <!-- steps -->
           <div class="loader-steps">
-            <div class="step done">✓ Uploaded successfully</div>
-
-            <div class="step done">✓ Text extracted</div>
-
-            <div class="step active">⏳ AI processing</div>
-
-            <div class="step">⏳ Generating suggestions</div>
+            <div class="step done">Uploaded successfully</div>
+            <div class="step active">Generating AI insights</div>
+            <div class="step">Preparing your recommendations</div>
           </div>
         </section>
       }
 
-      <!-- RESULT -->
-      @if (showResult && uploadResult) {
-        <section class="analysis-card">
+      @if (showResult && uploadResult; as result) {
+        <section class="analysis-card" aria-labelledby="analysis-results-title">
           <div class="analysis-header">
-            <span class="analysis-subtitle"> ATS SCORE </span>
-
-            <h2>{{ uploadResult.atsScore }}%</h2>
-
-            <p>Excellent Resume Quality</p>
+            <span class="analysis-subtitle">ATS SCORE</span>
+            <h2 id="analysis-results-title">{{ result.atsScore }}%</h2>
+            <p>{{ scoreLabel }}</p>
           </div>
-
           <div class="analysis-section">
-            <div class="analysis-title">Professional Summary</div>
-
-            <p>
-              {{ uploadResult.summary }}
-            </p>
+            <h3 class="analysis-title">Professional summary</h3>
+            <p>{{ result.summary }}</p>
           </div>
-
           <div class="analysis-skills-grid">
-            <div class="analysis-skill-card">
-              <div class="analysis-title">Matched Skills</div>
-
-              <div class="analysis-skills">
-                @for (skill of uploadResult.matchedSkills; track skill) {
-                  <span class="skill-badge success">
-                    {{ skill }}
-                  </span>
-                }
-              </div>
-            </div>
-
-            <div class="analysis-skill-card">
-              <div class="analysis-title">Missing Skills</div>
-
-              <div class="analysis-skills">
-                @for (skill of uploadResult.missingSkills; track skill) {
-                  <span class="skill-badge danger">
-                    {{ skill }}
-                  </span>
-                }
-              </div>
-            </div>
-          </div>
-
-          <div class="analysis-section">
-            <div class="analysis-title">AI Suggestions</div>
-
-            <div class="suggestion-list">
-              @for (suggestion of uploadResult.suggestions; track suggestion) {
-                <div class="suggestion-item">
-                  <div class="suggestion-icon">✨</div>
-
-                  <p>
-                    {{ suggestion }}
-                  </p>
+            <section class="analysis-skill-card" aria-labelledby="matched-skills-title">
+              <h3 id="matched-skills-title" class="analysis-title">Matched skills</h3>
+              @if (result.matchedSkills.length) {
+                <div class="analysis-skills">
+                  @for (skill of result.matchedSkills; track skill) {
+                    <span class="skill-badge success">{{ skill }}</span>
+                  }
                 </div>
+              } @else {
+                <p class="empty-result">No matched skills were returned.</p>
               }
-            </div>
+            </section>
+            <section class="analysis-skill-card" aria-labelledby="missing-skills-title">
+              <h3 id="missing-skills-title" class="analysis-title">Skills to consider</h3>
+              @if (result.missingSkills.length) {
+                <div class="analysis-skills">
+                  @for (skill of result.missingSkills; track skill) {
+                    <span class="skill-badge danger">{{ skill }}</span>
+                  }
+                </div>
+              } @else {
+                <p class="empty-result">No missing skills were identified.</p>
+              }
+            </section>
           </div>
+          <div class="analysis-section">
+            <h3 class="analysis-title">AI suggestions</h3>
+            @if (result.suggestions.length) {
+              <div class="suggestion-list">
+                @for (suggestion of result.suggestions; track suggestion) {
+                  <div class="suggestion-item">
+                    <div class="suggestion-icon" aria-hidden="true">✨</div>
+                    <p>{{ suggestion }}</p>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="empty-result">No additional suggestions were returned.</p>
+            }
+          </div>
+          <button class="secondary-action" type="button" (click)="analyzeAnotherResume()">
+            Analyze another resume
+          </button>
         </section>
       }
-    </div>
+    </section>
   </section>
 </main>

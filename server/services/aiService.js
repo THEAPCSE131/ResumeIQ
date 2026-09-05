@@ -51,8 +51,6 @@ ${resumeText}
 
     const rawContent = response.choices[0].message.content;
 
-    console.log("RAW AI RESPONSE:", rawContent);
-
     // clean markdown if AI returns ```json
     const cleaned = rawContent
       .replace(/```json/g, "")
@@ -61,7 +59,7 @@ ${resumeText}
 
     return JSON.parse(cleaned);
   } catch (error) {
-    console.error("Error analyzing resume with AI:", error);
+    console.error("AI resume analysis failed");
     throw error;
   }
 };
