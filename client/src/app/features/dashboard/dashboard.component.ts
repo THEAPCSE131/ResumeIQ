@@ -30,14 +30,16 @@ export class DashboardComponent {
   isAnalyzing = false;
   isDragActive = false;
   errorMessage = '';
+  canRetry = false;
   statusMessage = 'Choose a resume to begin your analysis.';
 
   get scoreLabel(): string {
     const score = this.uploadResult?.atsScore ?? 0;
-    if (score >= 85) return 'Excellent resume quality';
-    if (score >= 70) return 'Strong resume foundation';
-    if (score >= 50) return 'Good start — room to improve';
-    return 'Needs significant improvement';
+    if (score >= 90) return 'Excellent';
+    if (score >= 75) return 'Very Good';
+    if (score >= 60) return 'Good';
+    if (score >= 40) return 'Needs Improvement';
+    return 'Significant Improvement Needed';
   }
 
   get showResult(): boolean {
@@ -56,7 +58,10 @@ export class DashboardComponent {
 
   onDragOver(event: DragEvent): void {
     event.preventDefault();
-    if (!this.isAnalyzing) this.isDragActive = true;
+    if (!this.isAnalyzing) {
+      const file = event.dataTransfer?.files.item(0) ?? null;
+      this.isDragActive = Boolean(file && !this.validateFile(file));
+    }
   }
 
   onDragLeave(event: DragEvent): void {
@@ -82,6 +87,7 @@ export class DashboardComponent {
     if (this.isAnalyzing) return;
     this.selectedFile = null;
     this.errorMessage = '';
+    this.canRetry = false;
     this.statusMessage = 'Resume selection cleared.';
   }
 
@@ -101,6 +107,7 @@ export class DashboardComponent {
     }
 
     this.errorMessage = '';
+    this.canRetry = false;
     this.uploadResult = null;
     this.isAnalyzing = true;
     this.statusMessage = 'Resume uploaded. AI analysis is in progress.';
@@ -114,6 +121,7 @@ export class DashboardComponent {
       error: (error: Error) => {
         this.isAnalyzing = false;
         this.errorMessage = error.message || 'We could not analyze this resume. Please try again.';
+        this.canRetry = true;
         this.statusMessage = 'Analysis failed. You can retry with the selected resume.';
       },
     });
@@ -123,6 +131,7 @@ export class DashboardComponent {
     this.uploadResult = null;
     this.selectedFile = null;
     this.errorMessage = '';
+    this.canRetry = false;
     this.statusMessage = 'Choose another resume to begin a new analysis.';
   }
 
@@ -139,18 +148,35 @@ export class DashboardComponent {
     this.selectedFile = file;
     this.uploadResult = null;
     this.errorMessage = '';
+    this.canRetry = false;
     this.statusMessage = `${file.name} is ready for analysis.`;
   }
 
   private validateFile(file: File): string | null {
     const extension = file.name.split('.').pop()?.toLowerCase();
-    if (!extension || !['pdf', 'docx'].includes(extension)) {
+    const allowedMimeTypes: Record<string, string> = {
+      pdf: 'application/pdf',
+      docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    };
+    if (!extension || !(extension in allowedMimeTypes) || file.type !== allowedMimeTypes[extension]) {
       return 'Choose a PDF or DOCX resume.';
     }
     if (file.size > this.maxFileSizeBytes) {
       return 'Resume files must be 5 MB or smaller.';
     }
     return null;
+  }
+
+  retryAnalysis(): void {
+    this.uploadResume();
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024 * 1024) {
+      return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+    }
+
+    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
   }
 
   private toDisplayAnalysis(analysis: ResumeAnalysis): DisplayAnalysis {

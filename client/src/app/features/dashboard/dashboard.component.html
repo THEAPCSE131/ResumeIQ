@@ -40,7 +40,7 @@
               <div class="file-icon" aria-hidden="true">📄</div>
               <div class="file-details">
                 <h2>{{ selectedFile.name }}</h2>
-                <span>Ready for AI analysis</span>
+                <span>{{ formatFileSize(selectedFile.size) }} · Ready for AI analysis</span>
               </div>
               <button class="remove-file-btn" type="button" [disabled]="isAnalyzing"
                 [attr.aria-label]="'Remove ' + selectedFile.name" (click)="removeSelectedFile($event)">
@@ -53,6 +53,9 @@
         <p id="upload-help" class="supported-files">PDF or DOCX · Maximum file size 5 MB</p>
         @if (errorMessage) {
           <p id="upload-feedback" class="upload-feedback error" role="alert">{{ errorMessage }}</p>
+          @if (canRetry && selectedFile) {
+            <button class="retry-btn" type="button" [disabled]="isAnalyzing" (click)="retryAnalysis()">Retry analysis</button>
+          }
         }
 
         <button class="analyze-btn" type="button" [disabled]="!selectedFile || isAnalyzing"

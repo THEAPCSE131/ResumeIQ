@@ -49,7 +49,7 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('88%');
-    expect(fixture.nativeElement.textContent).toContain('Excellent resume quality');
+    expect(fixture.nativeElement.textContent).toContain('Very Good');
     expect(fixture.nativeElement.textContent).toContain('No missing skills were identified.');
   });
 
@@ -61,5 +61,6 @@ describe('DashboardComponent', () => {
     expect(component.isAnalyzing).toBeFalse();
     expect(component.selectedFile?.name).toBe('resume.pdf');
     expect(component.errorMessage).toBe('Service temporarily unavailable.');
+    expect(component.canRetry).toBeTrue();
   });
 });
