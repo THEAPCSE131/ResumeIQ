@@ -21,6 +21,12 @@ const uploadResume = async (req, res, next) => {
     const extractedText = await extractTextFromResume(filePath, mimeType);
     const validatedText = validateExtractedText(extractedText);
 
+    console.info("Resume text extracted for analysis", {
+      mimeType,
+      extractedTextLength: validatedText.length,
+      hasExtractedText: validatedText.length > 0,
+    });
+
     const aiResult = await analyzedResumeWithAI(validatedText);
 
     return res.status(200).json({
