@@ -43,6 +43,10 @@ app.use(
 
 app.use(express.json({ limit: "100kb" }));
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 app.use("/api", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/resume", resumeRoutes);
